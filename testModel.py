@@ -81,12 +81,23 @@ tokenizer = Tokenizer()
 tokenizer.fit_on_texts(test_docs)
 
 # sequence encode
-encoded_docs = tokenizer.texts_to_sequences(test_docs)
+sequences = tokenizer.texts_to_sequences(test_docs)
 
-# pad sequences
+# tokenizer.transform() ??
+
+
+# Das hier sollte funktionieren.
 max_length = max([len(s.split()) for s in test_docs])
-Xtest = pad_sequences(encoded_docs, maxlen=max_length, padding='post')
+print('Found %s unique tokens.' % max_length)
 
-y_sentiment = model.predict(np.array(Xtest))
+string = "I am a cat"
+query = tokenizer.texts_to_sequences(string)
+query = pad_sequences(query, maxlen=max_length)
 
-print(y_sentiment)
+prediction = model.predict_classes(query)
+
+print(prediction)
+
+# label = encoder.inverse_transform(prediction)
+
+# print(label)
