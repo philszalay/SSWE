@@ -9,6 +9,8 @@ from keras.layers import Flatten
 from keras.layers import Embedding
 from keras.layers.convolutional import Conv1D
 from keras.layers.convolutional import MaxPooling1D
+import pickle
+
 
 # load doc into memory
 def load_doc(filename):
@@ -71,13 +73,17 @@ tokenizer = Tokenizer()
 # fit the tokenizer on the documents
 tokenizer.fit_on_texts(train_docs)
 
+# save Tokenizer to file
+with open('tokenizer.pickle', 'wb') as handle:
+    pickle.dump(tokenizer, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
 # sequence encode
 encoded_docs = tokenizer.texts_to_sequences(train_docs)
 # pad sequences
 max_length = max([len(s.split()) for s in train_docs])
-Xtrain = pad_sequences(encoded_docs, maxlen=max_length, padding='post')
+xTrain = pad_sequences(encoded_docs, maxlen=max_length, padding='post')
 # define training labels
-ytrain = array([0 for _ in range(900)] + [1 for _ in range(900)])
+yTrain = array([0 for _ in range(900)] + [1 for _ in range(900)])
 
 # load all test reviews
 positive_docs = process_docs('txt_sentoken/pos', vocab, False)
@@ -86,9 +92,9 @@ test_docs = negative_docs + positive_docs
 # sequence encode
 encoded_docs = tokenizer.texts_to_sequences(test_docs)
 # pad sequences
-Xtest = pad_sequences(encoded_docs, maxlen=max_length, padding='post')
+xTest = pad_sequences(encoded_docs, maxlen=max_length, padding='post')
 # define test labels
-ytest = array([0 for _ in range(100)] + [1 for _ in range(100)])
+yTest = array([0 for _ in range(100)] + [1 for _ in range(100)])
 
 # define vocabulary size (largest integer value)
 vocab_size = len(tokenizer.word_index) + 1
@@ -105,10 +111,38 @@ print(model.summary())
 # compile network
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 # fit network
-model.fit(Xtrain, ytrain, epochs=10, verbose=2)
+model.fit(xTrain, yTrain, epochs=10, verbose=2)
 # evaluate
-loss, acc = model.evaluate(Xtest, ytest, verbose=0)
+loss, acc = model.evaluate(xTest, yTest, verbose=0)
+
 print('Test Accuracy: %f' % (acc * 100))
+
+print(xTest)
+
+print(yTest)
+
+print(xTrain)
+
+print(yTrain)
+
+testString = 'The actor performed very well in his role.'
+
+# split into tokens by white space
+testTokens = testString.split()
+# remove punctuation from each token
+table = str.maketrans('', '', punctuation)
+testTokens = [w.translate(table) for w in testTokens]
+# filter out tokens not in vocab
+testTokens = [w for w in testTokens if w in vocab]
+testTokens = ' '.join(testTokens)
+
+sequencedTestTokens = tokenizer.texts_to_sequences(testTokens)
+
+xTestPrediction = pad_sequences(sequencedTestTokens, maxlen=max_length, padding='post')
+
+yTestPrediction = model.predict(xTestPrediction)
+
+print('Die TestVorhersage lautet: ', yTestPrediction)
 
 # serialize model to JSON
 model_json = model.to_json()

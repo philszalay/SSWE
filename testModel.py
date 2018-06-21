@@ -5,6 +5,8 @@ from keras.preprocessing.sequence import pad_sequences
 from keras.preprocessing.text import Tokenizer
 from os import listdir
 from string import punctuation
+import pickle
+from numpy import array
 
 
 # load doc into memory
@@ -19,9 +21,9 @@ def load_doc(filename):
 
 
 # turn a doc into clean tokens
-def clean_doc(doc, vocab):
+def clean_sentence(sentence, vocab):
     # split into tokens by white space
-    tokens = doc.split()
+    tokens = sentence.split()
     # remove punctuation from each token
     table = str.maketrans('', '', punctuation)
     tokens = [w.translate(table) for w in tokens]
@@ -31,73 +33,39 @@ def clean_doc(doc, vocab):
     return tokens
 
 
-# load all docs in a directory
-def process_docs(directory, vocab, is_trian):
-    documents = list()
-    # walk through all files in the folder
-    for filename in listdir(directory):
-        # skip any reviews in the test set
-        if is_trian and filename.startswith('cv9'):
-            continue
-        if not is_trian and not filename.startswith('cv9'):
-            continue
-        # create the full path of the file to open
-        path = directory + '/' + filename
-        # load the doc
-        doc = load_doc(path)
-        # clean doc
-        tokens = clean_doc(doc, vocab)
-        # add to list
-        documents.append(tokens)
-    return documents
+# load tokenizer
+with open('tokenizer.pickle', 'rb') as handle:
+    tokenizer = pickle.load(handle)
 
+# load the vocabulary
+vocab_filename = 'vocab.txt'
+vocab = load_doc(vocab_filename)
 
-# load json and create model
+# load model
 json_file = open('model.json', 'r')
 loaded_model_json = json_file.read()
 json_file.close()
 model = model_from_json(loaded_model_json)
 
-# load weights into new model
+# load weights into model
 model.load_weights("model.h5")
 
-print("Loaded model from disk")
+# Get the input length of the models embedding layer
+max_length = model.layers[0].get_output_at(0).get_shape().as_list()[1]
 
-# load the vocabulary
-vocab_filename = 'vocab.txt'
-vocab = load_doc(vocab_filename)
-vocab = vocab.split()
-vocab = set(vocab)
+# Setup test sentence
+testSentence = 'unable to find true notes of unspoken familial empathy in the one-note and repetitively bitchy dialogue , screenwriters kristin amundsen and hans petter moland fabricate a series of contrivances to propel events forward -- lost money , roving street hooligans looking for drunks to kick around , nosy cops , and flat tires all figure into the schematic and convenient narrative . by the time they reach the hospital , it is time to unveil the secrets from a dark past that are not only simplistic devices that trivialize the father-daughter conflict , they are also the mainstays of many a bad strindberg wannabe . this revelation exists purely for its own sake . aberdeen does not know where else to go . '
 
-# load the test data and process it
-testDataFolder = 'testfolder'
-testdataDoc = load_doc(testDataFolder)
-test_docs = process_docs(testdataDoc, vocab, True)
+# Remove all tokens which are not known to the model
+cleanedTestSentence = clean_sentence(testSentence, vocab)
 
-# create the tokenizer
-tokenizer = Tokenizer()
+# Creates sequences of the trainingsdata
+sequencedTrainingSentence = tokenizer.texts_to_sequences(cleanedTestSentence)
 
-# fit the tokenizer on the test data
-tokenizer.fit_on_texts(test_docs)
+# Pad the sequences to the input_length of the embedding layer
+padedTrainingSentenceSequence = pad_sequences(sequencedTrainingSentence, maxlen=max_length)
 
-# sequence encode
-sequences = tokenizer.texts_to_sequences(test_docs)
-
-# tokenizer.transform() ??
-
-
-# Das hier sollte funktionieren.
-max_length = max([len(s.split()) for s in test_docs])
-print('Found %s unique tokens.' % max_length)
-
-string = "I am a cat"
-query = tokenizer.texts_to_sequences(string)
-query = pad_sequences(query, maxlen=max_length)
-
-prediction = model.predict_classes(query)
+# Make a prediction on the testsentence
+prediction = model.predict(padedTrainingSentenceSequence)
 
 print(prediction)
-
-# label = encoder.inverse_transform(prediction)
-
-# print(label)
