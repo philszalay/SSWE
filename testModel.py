@@ -1,12 +1,9 @@
 # MLP for Pima Indians Dataset Serialize to JSON and HDF5
-import numpy as np
+import pickle
+from string import punctuation
+
 from keras.models import model_from_json
 from keras.preprocessing.sequence import pad_sequences
-from keras.preprocessing.text import Tokenizer
-from os import listdir
-from string import punctuation
-import pickle
-from numpy import array
 
 
 # load doc into memory
@@ -22,6 +19,8 @@ def load_doc(filename):
 
 # turn a doc into clean tokens
 def clean_sentence(sentence, vocab):
+    # lower the sentence
+    sentence.lower()
     # split into tokens by white space
     tokens = sentence.split()
     # remove punctuation from each token
@@ -70,5 +69,3 @@ prediction = model.predict(padedTrainingSentenceSequence)
 
 # Print out the prediction
 print("Prediction \n", prediction)
-
-
