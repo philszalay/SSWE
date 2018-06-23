@@ -1,6 +1,7 @@
 # MLP for Pima Indians Dataset Serialize to JSON and HDF5
 import os
 import pickle
+from os import listdir
 from string import punctuation
 
 from keras.models import model_from_json
@@ -118,13 +119,23 @@ def predict_testset_review(filepath):
     print("Prediction of review with sentiment", sentiment_from_filename(filepath), ":", prediction)
 
 
+def predict_all_metacritic_reviews():
+    directory = "metacriticReviews/"
+    for filename in listdir(directory):
+        predict_metacritic_review(directory + filename)
+
+
+def predict_all_metacritic_userreviews():
+    directory = "metacriticUserReviews/"
+    for filename in listdir(directory):
+        predict_metacritic_user_review(directory + filename)
+
+
 # Predict reviews from http://www.metacritic.com/movie -> Rating between 0 and 100
-predict_metacritic_review("metacriticReviews/01_review_30.txt")
-predict_metacritic_review("metacriticReviews/02_review_100.txt")
+predict_all_metacritic_reviews()
 
 # Predict user reviews from http://www.metacritic.com/movie -> Rating between 0 and 10
-predict_metacritic_user_review("metacriticUserReviews/01_userreview_2.txt")
-predict_metacritic_user_review("metacriticUserReviews/02_userreview_4.txt")
+predict_all_metacritic_userreviews()
 
 # Predict reviews from the testset -> Rating between negative and positive
 predict_testset_review("txt_sentoken/neg/cv000_29416.txt")
