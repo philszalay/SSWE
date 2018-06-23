@@ -98,7 +98,16 @@ def predict_metacritic_review(filepath):
     # Predict the sentiment of the review
     prediction = predict_review(review)
     # Print out the prediction
-    print("Prediction of review with rating", rating_from_filename(filepath), ":", prediction)
+    print("Prediction of metacritic-review with rating", rating_from_filename(filepath), ":", prediction)
+
+
+def predict_metacritic_user_review(filepath):
+    # Load Review
+    review = load_review(filepath)
+    # Predict the sentiment of the review
+    prediction = predict_review(review)
+    # Print out the prediction
+    print("Prediction of metacritic user review with rating", rating_from_filename(filepath), ":", prediction)
 
 
 def predict_testset_review(filepath):
@@ -109,11 +118,15 @@ def predict_testset_review(filepath):
     print("Prediction of review with sentiment", sentiment_from_filename(filepath), ":", prediction)
 
 
-# Predict reviews from http://www.metacritic.com/movie
+# Predict reviews from http://www.metacritic.com/movie -> Rating between 0 and 100
 predict_metacritic_review("metacriticReviews/01_review_30.txt")
 predict_metacritic_review("metacriticReviews/02_review_100.txt")
 
-# Predict reviews from the testset
+# Predict user reviews from http://www.metacritic.com/movie -> Rating between 0 and 10
+predict_metacritic_user_review("metacriticUserReviews/01_userreview_2.txt")
+predict_metacritic_user_review("metacriticUserReviews/02_userreview_4.txt")
+
+# Predict reviews from the testset -> Rating between negative and positive
 predict_testset_review("txt_sentoken/neg/cv000_29416.txt")
 predict_testset_review("txt_sentoken/neg/cv001_19502.txt")
 predict_testset_review("txt_sentoken/neg/cv002_17424.txt")

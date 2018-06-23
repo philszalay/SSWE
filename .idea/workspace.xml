@@ -2,12 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="20272311-9daa-4bfe-9c0e-784a8b51cd58" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/metacriticReviews/01_review_30.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/metacriticReviews/02_review_100.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/metacriticUserReviews/01_userreview_2.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/metacriticUserReviews/02_userreview_4.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/testModel.py" beforeDir="false" afterPath="$PROJECT_DIR$/testModel.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/testdata.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/train.py" beforeDir="false" afterPath="$PROJECT_DIR$/train.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -18,18 +16,36 @@
   </component>
   <component name="CoverageDataManager">
     <SUITE FILE_PATH="coverage/SSWE$train.coverage" NAME="train Coverage Results" MODIFIED="1529604162290" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/SSWE$testModel.coverage" NAME="testModel Coverage Results" MODIFIED="1529769706400" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/SSWE$testModel.coverage" NAME="testModel Coverage Results" MODIFIED="1529770404415" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file leaf-file-name="testModel.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/testModel.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="287">
-              <caret line="114" column="35" selection-start-line="114" selection-start-column="35" selection-end-line="114" selection-end-column="35" />
+            <state relative-caret-position="253">
+              <caret line="84" selection-start-line="84" selection-end-line="84" />
               <folding>
-                <element signature="e#58#88#0" expanded="true" />
+                <element signature="e#58#67#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="02_userreview_4.txt" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/metacriticUserReviews/02_userreview_4.txt">
+          <provider selected="true" editor-type-id="text-editor">
+            <state>
+              <caret column="893" selection-start-column="893" selection-end-column="893" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="01_userreview_2.txt" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/metacriticUserReviews/01_userreview_2.txt">
+          <provider selected="true" editor-type-id="text-editor">
+            <state>
+              <caret column="30" selection-start-column="30" selection-end-column="30" />
             </state>
           </provider>
         </entry>
@@ -56,10 +72,7 @@
         <entry file="file://$PROJECT_DIR$/train.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="-1719">
-              <caret line="24" lean-forward="true" selection-start-line="24" selection-end-line="24" />
-              <folding>
-                <element signature="e#0#30#0" expanded="true" />
-              </folding>
+              <caret line="25" selection-start-line="25" selection-end-line="25" />
             </state>
           </provider>
         </entry>
@@ -80,7 +93,7 @@
       <find>encoder</find>
       <find>Tokenizer</find>
       <find>array</find>
-      <find />
+      <find>define traini</find>
       <find>”</find>
     </findStrings>
     <replaceStrings>
@@ -100,6 +113,8 @@
         <option value="$PROJECT_DIR$/testReviews/02_review_80.txt" />
         <option value="$PROJECT_DIR$/testReviews/02_review_100.txt" />
         <option value="$PROJECT_DIR$/train.py" />
+        <option value="$PROJECT_DIR$/metacriticUserReviews/01_userreview_2" />
+        <option value="$PROJECT_DIR$/metacriticUserReviews/02_userreview_2.txt" />
         <option value="$PROJECT_DIR$/testModel.py" />
       </list>
     </option>
@@ -141,13 +156,12 @@
             <path>
               <item name="SSWE" type="b2602c69:ProjectViewProjectNode" />
               <item name="SSWE" type="462c0819:PsiDirectoryNode" />
-              <item name="txt_sentoken" type="462c0819:PsiDirectoryNode" />
+              <item name="metacriticUserReviews" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="SSWE" type="b2602c69:ProjectViewProjectNode" />
               <item name="SSWE" type="462c0819:PsiDirectoryNode" />
               <item name="txt_sentoken" type="462c0819:PsiDirectoryNode" />
-              <item name="pos" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -167,6 +181,7 @@
       <recent name="C:\Users\Yanneck\PycharmProjects\SSWE\testfolder" />
     </key>
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Yanneck\PycharmProjects\SSWE\metacriticUserReviews" />
       <recent name="C:\Users\Yanneck\PycharmProjects\SSWE\testReviews" />
       <recent name="C:\Users\Yanneck\PycharmProjects\SSWE" />
     </key>
@@ -258,7 +273,14 @@
       <option name="project" value="LOCAL" />
       <updated>1529765630468</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Das Predicten wurde in mehrere Funktionen ausgelagert, man kann jetzt Testsets von metacritic hinzufügen als test oder auch die Trainingsdaten prüfen">
+      <created>1529769793396</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1529769793396</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -266,16 +288,16 @@
     <editor active="true" />
     <layout>
       <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Event Log" order="7" sideWeight="0.36764705" side_tool="true" visible="true" weight="0.44858757" />
+      <window_info anchor="bottom" id="Event Log" order="7" sideWeight="0.36817226" side_tool="true" visible="true" weight="0.44858757" />
       <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="7" />
       <window_info anchor="bottom" id="Python Console" order="7" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.63235295" visible="true" weight="0.44858757" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.6318277" visible="true" weight="0.44858757" />
       <window_info anchor="bottom" id="Terminal" order="7" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.18014705" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.18014705" />
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="right" id="Database" order="3" />
-      <window_info anchor="bottom" id="Find" order="1" sideWeight="0.4947479" weight="0.32881355" />
+      <window_info anchor="bottom" id="Find" order="1" sideWeight="0.4942227" weight="0.32881355" />
       <window_info anchor="right" id="SciView" order="3" visible="true" weight="0.036239497" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
@@ -297,7 +319,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Funktionierende Testversion, Testsätze können in 'testdata.txt' geschrieben werden" />
     <MESSAGE value="Sätze werden jetzt beim Cleanen alle zu lowercase umgewandelt" />
-    <option name="LAST_COMMIT_MESSAGE" value="Sätze werden jetzt beim Cleanen alle zu lowercase umgewandelt" />
+    <MESSAGE value="Das Predicten wurde in mehrere Funktionen ausgelagert, man kann jetzt Testsets von metacritic hinzufügen als test oder auch die Trainingsdaten prüfen" />
+    <option name="LAST_COMMIT_MESSAGE" value="Das Predicten wurde in mehrere Funktionen ausgelagert, man kann jetzt Testsets von metacritic hinzufügen als test oder auch die Trainingsdaten prüfen" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
@@ -320,7 +343,7 @@
         <state relative-caret-position="782">
           <caret line="53" column="59" selection-start-line="53" selection-start-column="59" selection-end-line="53" selection-end-column="59" />
           <folding>
-            <element signature="e#58#88#0" expanded="true" />
+            <element signature="e#58#67#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -381,7 +404,7 @@
         <state relative-caret-position="1343">
           <caret line="84" selection-start-line="84" selection-end-line="84" />
           <folding>
-            <element signature="e#58#88#0" expanded="true" />
+            <element signature="e#58#67#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -566,19 +589,30 @@
     <entry file="file://$PROJECT_DIR$/train.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-1719">
-          <caret line="24" lean-forward="true" selection-start-line="24" selection-end-line="24" />
-          <folding>
-            <element signature="e#0#30#0" expanded="true" />
-          </folding>
+          <caret line="25" selection-start-line="25" selection-end-line="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/metacriticUserReviews/01_userreview_2.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret column="30" selection-start-column="30" selection-end-column="30" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/metacriticUserReviews/02_userreview_4.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret column="893" selection-start-column="893" selection-end-column="893" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/testModel.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="287">
-          <caret line="114" column="35" selection-start-line="114" selection-start-column="35" selection-end-line="114" selection-end-column="35" />
+        <state relative-caret-position="253">
+          <caret line="84" selection-start-line="84" selection-end-line="84" />
           <folding>
-            <element signature="e#58#88#0" expanded="true" />
+            <element signature="e#58#67#0" expanded="true" />
           </folding>
         </state>
       </provider>
