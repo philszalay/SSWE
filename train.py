@@ -1,21 +1,22 @@
-from string import punctuation
+import pickle
 from os import listdir
-from numpy import array
-from keras.preprocessing.text import Tokenizer
-from keras.preprocessing.sequence import pad_sequences
-from keras.models import Sequential
+from string import punctuation
+
 from keras.layers import Dense
-from keras.layers import Flatten
 from keras.layers import Embedding
+from keras.layers import Flatten
 from keras.layers.convolutional import Conv1D
 from keras.layers.convolutional import MaxPooling1D
-import pickle
+from keras.models import Sequential
+from keras.preprocessing.sequence import pad_sequences
+from keras.preprocessing.text import Tokenizer
+from numpy import array
 
 
 # load doc into memory
 def load_doc(filename):
     # open the file as read only
-    file = open(filename, 'r')
+    file = open(filename, 'r', encoding="utf-8")
     # read all text
     text = file.read()
     # close the file
@@ -148,7 +149,6 @@ print('Die TestVorhersage lautet: ', yTestPrediction)
 model_json = model.to_json()
 with open("model.json", "w") as json_file:
     json_file.write(model_json)
-
 
 # serialize weights to HDF5
 model.save_weights("model.h5")
