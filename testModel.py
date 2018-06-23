@@ -54,13 +54,13 @@ model.load_weights("model.h5")
 max_length = model.layers[0].get_output_at(0).get_shape().as_list()[1]
 
 # Setup test sentence
-testSentence = 'unable to find true notes of unspoken familial empathy in the one-note and repetitively bitchy dialogue , screenwriters kristin amundsen and hans petter moland fabricate a series of contrivances to propel events forward -- lost money , roving street hooligans looking for drunks to kick around , nosy cops , and flat tires all figure into the schematic and convenient narrative . by the time they reach the hospital , it is time to unveil the secrets from a dark past that are not only simplistic devices that trivialize the father-daughter conflict , they are also the mainstays of many a bad strindberg wannabe . this revelation exists purely for its own sake . aberdeen does not know where else to go . '
+testSentence = load_doc("testdata.txt")
 
 # Remove all tokens which are not known to the model
 cleanedTestSentence = clean_sentence(testSentence, vocab)
 
 # Creates sequences of the trainingsdata
-sequencedTrainingSentence = tokenizer.texts_to_sequences(cleanedTestSentence)
+sequencedTrainingSentence = tokenizer.texts_to_sequences([cleanedTestSentence])
 
 # Pad the sequences to the input_length of the embedding layer
 padedTrainingSentenceSequence = pad_sequences(sequencedTrainingSentence, maxlen=max_length)
@@ -68,4 +68,7 @@ padedTrainingSentenceSequence = pad_sequences(sequencedTrainingSentence, maxlen=
 # Make a prediction on the testsentence
 prediction = model.predict(padedTrainingSentenceSequence)
 
-print(prediction)
+# Print out the prediction
+print("Prediction \n", prediction)
+
+
