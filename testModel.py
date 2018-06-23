@@ -42,6 +42,7 @@ def clean_sentence(sentence, vocab):
     # filter out tokens not in vocab
     tokens = [w for w in tokens if w in vocab]
     tokens = ' '.join(tokens)
+
     return tokens
 
 
