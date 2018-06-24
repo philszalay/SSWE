@@ -106,8 +106,9 @@ model.add(Embedding(vocab_size, 100, input_length=max_length))
 model.add(Conv1D(filters=32, kernel_size=8, activation='relu'))
 model.add(MaxPooling1D(pool_size=2))
 model.add(Flatten())
-model.add(Dense(10, activation='relu'))
+model.add(Dense(10, activation='relu'))  # Dense: Fully connected layer
 model.add(Dense(1, activation='sigmoid'))
+
 print(model.summary())
 # compile network
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
