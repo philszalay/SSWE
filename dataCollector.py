@@ -59,15 +59,15 @@ class MyListener(StreamListener):
         return True
 
 
-def de_emojify(inputString):
-    returnString = ""
-    for character in inputString:
+def de_emojify(emojified_tweet):
+    cleared_tweet = ""
+    for character in emojified_tweet:
         try:
             character.encode("ascii")
-            returnString += character
+            cleared_tweet += character
         except UnicodeEncodeError:
-            returnString += ''
-    return returnString
+            cleared_tweet += ''
+    return cleared_tweet
 
 
 def clean_tweet(tweet):
