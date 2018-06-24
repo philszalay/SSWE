@@ -12,18 +12,6 @@ from tweepy.streaming import StreamListener
 import config
 
 
-def fetch_init_counter(data_dir):
-    heighest_index = 0
-    for filename in listdir(data_dir):
-        # Get index of filename
-        file_index = int(filename.split('_')[1].split('.')[0])
-        # Check if the file_index is heigher than the current heighest index
-        if file_index > heighest_index:
-            heighest_index = file_index
-
-    return heighest_index
-
-
 class MyListener(StreamListener):
     """Custom StreamListener for streaming data."""
 
@@ -31,15 +19,14 @@ class MyListener(StreamListener):
         self.data_dir = data_dir
         self.counter = fetch_init_counter(data_dir)
         self.sentiment = sentiment
-        filename = "%s/" + sentiment + "_%s.txt"
+        self.filename = "%s/tweet_" + sentiment + "_%s.txt"
 
-        self.current_filename = filename % (data_dir, str(self.counter))
+        self.current_filename = self.filename % (data_dir, str(self.counter))
 
     def on_data(self, data):
         try:
             self.counter += 1
-            filename = "%s/" + self.sentiment + "_%s.txt"
-            self.current_filename = filename % (self.data_dir, str(self.counter))
+            self.current_filename = self.filename % (self.data_dir, str(self.counter))
             with open(self.current_filename, 'a', encoding="utf-8") as f:
                 formatted_data = format_tweet(data)
                 f.write(formatted_data)
@@ -57,6 +44,18 @@ class MyListener(StreamListener):
     def on_error(self, status):
         print(status)
         return True
+
+
+def fetch_init_counter(data_dir):
+    heighest_index = 0
+    for filename in listdir(data_dir):
+        # Get index of filename
+        file_index = int(filename.split('_')[2].split('.')[0])
+        # Check if the file_index is heigher than the current heighest index
+        if file_index > heighest_index:
+            heighest_index = file_index
+
+    return heighest_index
 
 
 def de_emojify(emojified_tweet):
@@ -148,6 +147,6 @@ def setup_authenticator():
 
 auth = setup_authenticator()
 
-# stream_pos_tweets(auth)
+stream_pos_tweets(auth)
 
-stream_neg_tweets(auth)
+# stream_neg_tweets(auth)
