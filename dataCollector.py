@@ -67,7 +67,11 @@ def clean_tweet(tweet):
     # lower the sentence
     tweet.lower()
     # remove http links
-    tweet = re.sub(r"http\S+", "", tweet)
+    tweet = re.sub(r'http\S+', '', tweet)
+    # Remove mentions and retweets
+    tweet = re.sub(r'@[A-Za-z0-9]+', '', tweet)
+    # Remove Retweet RT
+    tweet = re.sub(r'RT+\s', '', tweet)
     # remove punctuation from tweet
     table = str.maketrans(dict.fromkeys(string.punctuation))
     tweet.translate(table)
