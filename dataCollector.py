@@ -5,7 +5,6 @@ import string
 import time
 from os import listdir
 
-from langdetect import detect
 from tweepy import OAuthHandler
 from tweepy import Stream
 from tweepy.streaming import StreamListener
@@ -28,15 +27,19 @@ def fetch_init_counter(data_dir):
 class MyListener(StreamListener):
     """Custom StreamListener for streaming data."""
 
-    def __init__(self, data_dir):
+    def __init__(self, data_dir, sentiment):
         self.data_dir = data_dir
         self.counter = fetch_init_counter(data_dir)
-        self.current_filename = "%s/pos_%s.txt" % (data_dir, str(self.counter))
+        self.sentiment = sentiment
+        filename = "%s/" + sentiment + "_%s.txt"
+
+        self.current_filename = filename % (data_dir, str(self.counter))
 
     def on_data(self, data):
         try:
             self.counter += 1
-            self.current_filename = "%s/pos_%s.txt" % (self.data_dir, str(self.counter))
+            filename = "%s/" + self.sentiment + "_%s.txt"
+            self.current_filename = filename % (self.data_dir, str(self.counter))
             with open(self.current_filename, 'a', encoding="utf-8") as f:
                 formatted_data = format_tweet(data)
                 f.write(formatted_data)
@@ -56,25 +59,35 @@ class MyListener(StreamListener):
         return True
 
 
-def check_tweet_for_language(tweet):
-    if detect(tweet) == 'en':
-        return True
-    else:
-        raise Exception('Tweet is not in english')
+def de_emojify(inputString):
+    returnString = ""
+    for character in inputString:
+        try:
+            character.encode("ascii")
+            returnString += character
+        except UnicodeEncodeError:
+            returnString += ''
+    return returnString
 
 
 def clean_tweet(tweet):
-    # lower the sentence
-    tweet.lower()
     # remove http links
     tweet = re.sub(r'http\S+', '', tweet)
+    # Remove Emojis etc.
+    tweet = de_emojify(tweet)
     # Remove mentions and retweets
     tweet = re.sub(r'@[A-Za-z0-9]+', '', tweet)
     # Remove Retweet RT
     tweet = re.sub(r'RT+\s', '', tweet)
+    # remove cutted words
+    tweet = re.sub(r'\w+(...)$', '', tweet)
     # remove punctuation from tweet
-    table = str.maketrans(dict.fromkeys(string.punctuation))
-    tweet.translate(table)
+    translator = str.maketrans('', '', string.punctuation)
+    tweet = tweet.translate(translator)
+    # remove leading whitespaces
+    tweet = tweet.lstrip(' ')
+    # Format the tweet to lowercase
+    tweet = tweet.lower()
 
     return tweet
 
@@ -115,7 +128,7 @@ def stream_pos_tweets(auth):
     data_dir = "twitterdata/pos"
     pos_query = [":)", ":-)"]
 
-    twitter_stream = Stream(auth, MyListener(data_dir))
+    twitter_stream = Stream(auth, MyListener(data_dir, "pos"))
     twitter_stream.filter(track=pos_query, languages=['en'])
 
 
@@ -123,7 +136,7 @@ def stream_neg_tweets(auth):
     data_dir = "twitterdata/neg"
     neg_query = [":(", ":-("]
 
-    twitter_stream = Stream(auth, MyListener(data_dir))
+    twitter_stream = Stream(auth, MyListener(data_dir, sentiment="neg"))
     twitter_stream.filter(track=neg_query, languages=['en'])
 
 
