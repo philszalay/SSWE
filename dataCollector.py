@@ -147,6 +147,6 @@ def setup_authenticator():
 
 auth = setup_authenticator()
 
-stream_pos_tweets(auth)
+# stream_pos_tweets(auth)
 
-# stream_neg_tweets(auth)
+stream_neg_tweets(auth)

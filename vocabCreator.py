@@ -1,6 +1,8 @@
 from os import listdir
 from string import punctuation
 
+from nltk.corpus import stopwords
+
 
 # turn a doc into clean tokens
 def clean_doc(doc):
@@ -9,6 +11,13 @@ def clean_doc(doc):
     # remove punctuation from each token
     table = str.maketrans('', '', punctuation)
     tokens = [w.translate(table) for w in tokens]
+    # remove remaining tokens that are not alphabetic
+    tokens = [word for word in tokens if word.isalpha()]
+    # filter out stop words
+    stop_words = set(stopwords.words('english'))
+    tokens = [w for w in tokens if not w in stop_words]
+    # filter out short tokens
+    tokens = [word for word in tokens if len(word) > 1]
     return tokens
 
 
@@ -47,6 +56,13 @@ def create_vocab_from_tweets(directory):
     return vocab
 
 
+def remove_unwantedtokens(vocab, min_occurance):
+    # keep tokens with a min occurrence
+    tokens = [k for k in vocab if vocab.count(k) >= min_occurance]
+
+    return tokens
+
+
 twitter_pos = create_vocab_from_tweets("twitterdata/pos")
 twitter_neg = create_vocab_from_tweets("twitterdata/neg")
 
@@ -56,7 +72,10 @@ twitter_vocab.extend(twitter_neg)
 
 file = "twitter_vocab.txt"
 
+twitter_vocab = remove_unwantedtokens(twitter_vocab, 2)
+
 with open(file, 'a', encoding="utf-8") as f:
     for token in twitter_vocab:
         f.write(str(token) + "\n")
+    print("Anzahl an Tokens \n:", len(twitter_vocab))
     print(file, "successfully created.")
