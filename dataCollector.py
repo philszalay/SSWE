@@ -37,6 +37,7 @@ class MyListener(StreamListener):
         self.sentiment = sentiment
         self.trainingstweet_filename = "%s/tweet_" + sentiment + "_%s.txt"
         self.testtweet_filename = "%s/testtweet_" + sentiment + "_%s.txt"
+        self.collected_tweets = fetch_all_existing_tweets(data_dir)
 
         self.current_filename = self.trainingstweet_filename % (data_dir, str(self.train_data_file_index))
 
@@ -50,13 +51,13 @@ class MyListener(StreamListener):
             # Update the filename
             self.current_filename = self.trainingstweet_filename % (self.data_dir, str(self.train_data_file_index))
             try:
-                write_tweet_to_file(self.current_filename, self.data_dir, data)
+                self.collected_tweets = write_tweet_to_file(self.current_filename, data, self.collected_tweets)
                 return True
-            except BaseException as e:
+            except (IOError, ValueError) as e:
                 print("Error on_data: %s" % str(e))
 
                 # Remove the file because an error occured
-                if not isinstance(e, ValueError):
+                if isinstance(e, IOError):
                     os.remove(self.current_filename)
                     self.train_data_file_index -= 1
                     time.sleep(5)
@@ -70,13 +71,13 @@ class MyListener(StreamListener):
 
             try:
                 # Try to write the data to a file
-                write_tweet_to_file(self.current_filename, self.data_dir, data)
+                self.collected_tweets = write_tweet_to_file(self.current_filename, data, self.collected_tweets)
                 return True
-            except BaseException as e:
+            except (IOError, ValueError) as e:
                 print("Error on_data: %s" % str(e))
 
                 # Remove the file because an error occured
-                if not isinstance(e, ValueError):
+                if isinstance(e, IOError):
                     os.remove(self.current_filename)
                     self.test_data_file_index -= 1
                     time.sleep(5)
@@ -92,26 +93,35 @@ class MyListener(StreamListener):
 
 # This is where the magic happens, checks the tweet for constraints,
 # cleans and formats it and writes it to file afterwards
-def write_tweet_to_file(filename, data_dir, data):
+def write_tweet_to_file(filename, data, collected_tweets):
     min_word_count = 2
     try:
         with open(filename, 'a', encoding="utf-8") as f:
+            # Get Tweet Text
             tweet_text = get_tweet_text(data)
+            # Format the Tweet text
             formatted_data = clean_tweet(tweet_text)
-            if no_duplicate(data_dir, tweet_text) and not tweet_text.isspace():
+            # If the tweet is not already contained in the collected data-set and is not empty
+            if no_duplicate(collected_tweets, formatted_data) and not tweet_text.isspace():
+                # If the tweet contains the minimum amount of words
                 if len(formatted_data.split()) >= min_word_count:
+                    # Write the formatted tweet to file
                     f.write(formatted_data)
                     print(filename, ":", formatted_data)
                 else:
-                    raise ValueError("Tweet contains only " + len(formatted_data.split()) + " words")
+                    raise ValueError("Tweet contains only " + str(len(formatted_data.split())) + " words")
             else:
                 raise ValueError("Tweet already exists or is empty.")
     except BaseException:
         raise
 
+    return formatted_data
+
 
 def fetch_init_counter(data_dir):
+    # Initial Index counter
     heighest_index = 0
+    # Iterate through all existing filenames and get the highest index
     for filename in listdir(data_dir):
         # Get index of filename
         file_index = int(filename.split('_')[2].split('.')[0])
@@ -119,6 +129,7 @@ def fetch_init_counter(data_dir):
         if file_index > heighest_index:
             heighest_index = file_index
 
+    # Return the heighest found index
     return heighest_index
 
 
@@ -163,22 +174,31 @@ def clean_tweet(tweet):
 
 def get_tweet_text(data):
     json_object = json.loads(data)
-
+    # 'text' of the .json object
     tweet = json_object['text']
-
     return tweet
 
 
-def no_duplicate(data_dir, tweet):
+def no_duplicate(collected_tweets, tweet):
+    for ct in collected_tweets:
+        if ct == tweet:
+            return False
+    return True
+
+
+def fetch_all_existing_tweets(data_dir):
+    all_tweets = []
+
     for filename in listdir(data_dir):
         # create the full path of the file to open
         path = data_dir + '/' + filename
         # load the doc
         tweet_from_file = load_doc(path)
-        # compare
-        if tweet_from_file == tweet:
-            return False
-    return True
+
+        # put in all_tweets
+        all_tweets.append([tweet_from_file])
+
+    return all_tweets
 
 
 def format_filename(fname):
