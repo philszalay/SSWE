@@ -84,7 +84,7 @@ class MyListener(StreamListener):
             return True
         # If not we already got all our tweets and exit the program
         else:
-            sys.exit("All files have been successfully been collected")
+            sys.exit("All files successfully collected")
 
     def on_error(self, status):
         print(status)
