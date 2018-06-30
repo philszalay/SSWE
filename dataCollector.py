@@ -55,11 +55,11 @@ class MyListener(StreamListener):
                 return True
             except (IOError, ValueError) as e:
                 print("Error on_data: %s" % str(e))
+                self.train_data_file_index -= 1
 
                 # Remove the file because an error occured
                 if isinstance(e, IOError):
                     os.remove(self.current_filename)
-                    self.train_data_file_index -= 1
                     time.sleep(5)
             return True
         # If not should the data be seen as test data?
@@ -75,11 +75,11 @@ class MyListener(StreamListener):
                 return True
             except (IOError, ValueError) as e:
                 print("Error on_data: %s" % str(e))
+                self.test_data_file_index -= 1
 
                 # Remove the file because an error occured
                 if isinstance(e, IOError):
                     os.remove(self.current_filename)
-                    self.test_data_file_index -= 1
                     time.sleep(5)
             return True
         # If not we already got all our tweets and exit the program
@@ -190,6 +190,8 @@ def fetch_all_existing_tweets(data_dir):
     all_tweets = []
 
     for filename in listdir(data_dir):
+        if not filename.startswith('tweet'):
+            continue
         # create the full path of the file to open
         path = data_dir + '/' + filename
         # load the doc
@@ -251,4 +253,4 @@ auth = setup_authenticator()
 
 stream_pos_tweets(auth, 5000, 100)
 
-# stream_neg_tweets(auth, 1000, 100)
+# stream_neg_tweets(auth, 5000, 100)
