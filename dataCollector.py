@@ -2,8 +2,10 @@ import json
 import os
 import re
 import string
+import sys
 import time
 from os import listdir
+from string import digits
 
 from tweepy import OAuthHandler
 from tweepy import Stream
@@ -12,38 +14,100 @@ from tweepy.streaming import StreamListener
 import config
 
 
+# load doc into memory
+def load_doc(filename):
+    # open the file as read only
+    file = open(filename, 'r', encoding="utf-8")
+    # read all text
+    text = file.read()
+    # close the file
+    file.close()
+    return text
+
+
 class MyListener(StreamListener):
     """Custom StreamListener for streaming data."""
 
-    def __init__(self, data_dir, sentiment):
+    def __init__(self, data_dir, sentiment, number_of_training_tweets, number_of_test_tweets):
+        self.number_of_training_tweets = number_of_training_tweets
+        self.number_of_test_tweets = number_of_test_tweets
         self.data_dir = data_dir
-        self.counter = fetch_init_counter(data_dir)
+        self.test_data_file_index = 0;
+        self.train_data_file_index = fetch_init_counter(data_dir)
         self.sentiment = sentiment
-        self.filename = "%s/tweet_" + sentiment + "_%s.txt"
+        self.trainingstweet_filename = "%s/tweet_" + sentiment + "_%s.txt"
+        self.testtweet_filename = "%s/testtweet_" + sentiment + "_%s.txt"
 
-        self.current_filename = self.filename % (data_dir, str(self.counter))
+        self.current_filename = self.trainingstweet_filename % (data_dir, str(self.train_data_file_index))
 
+    # Called when new data is received by the twitter stream
     def on_data(self, data):
-        try:
-            self.counter += 1
-            self.current_filename = self.filename % (self.data_dir, str(self.counter))
-            with open(self.current_filename, 'a', encoding="utf-8") as f:
-                formatted_data = format_tweet(data)
-                f.write(formatted_data)
-                print(self.current_filename, ":", formatted_data)
+        # Increment the file index for the trainings data by one, has to happen before the check for the case you
+        # execute the script on existing test data
+        self.train_data_file_index += 1
+        # Should the data be seen as trainings data?
+        if self.train_data_file_index <= self.number_of_training_tweets:
+            # Update the filename
+            self.current_filename = self.trainingstweet_filename % (self.data_dir, str(self.train_data_file_index))
+            try:
+                write_tweet_to_file(self.current_filename, self.data_dir, data)
                 return True
-        except BaseException as e:
-            print("Error on_data: %s" % str(e))
+            except BaseException as e:
+                print("Error on_data: %s" % str(e))
 
-            os.remove(self.current_filename)
-            self.counter -= 1
+                # Remove the file because an error occured
+                if not isinstance(e, ValueError):
+                    os.remove(self.current_filename)
+                    self.train_data_file_index -= 1
+                    time.sleep(5)
+            return True
+        # If not should the data be seen as test data?
+        elif self.test_data_file_index < self.number_of_test_tweets:
+            # Increment the file index for the test data by one
+            self.test_data_file_index += 1
+            # Update the filename
+            self.current_filename = self.testtweet_filename % (self.data_dir, str(self.test_data_file_index))
 
-            time.sleep(5)
-        return True
+            try:
+                # Try to write the data to a file
+                write_tweet_to_file(self.current_filename, self.data_dir, data)
+                return True
+            except BaseException as e:
+                print("Error on_data: %s" % str(e))
+
+                # Remove the file because an error occured
+                if not isinstance(e, ValueError):
+                    os.remove(self.current_filename)
+                    self.test_data_file_index -= 1
+                    time.sleep(5)
+            return True
+        # If not we already got all our tweets and exit the program
+        else:
+            sys.exit("All files have been successfully been collected")
 
     def on_error(self, status):
         print(status)
         return True
+
+
+# This is where the magic happens, checks the tweet for constraints,
+# cleans and formats it and writes it to file afterwards
+def write_tweet_to_file(filename, data_dir, data):
+    min_word_count = 2
+    try:
+        with open(filename, 'a', encoding="utf-8") as f:
+            tweet_text = get_tweet_text(data)
+            formatted_data = clean_tweet(tweet_text)
+            if no_duplicate(data_dir, tweet_text) and not tweet_text.isspace():
+                if len(formatted_data.split()) >= min_word_count:
+                    f.write(formatted_data)
+                    print(filename, ":", formatted_data)
+                else:
+                    raise ValueError("Tweet contains only " + len(formatted_data.split()) + " words")
+            else:
+                raise ValueError("Tweet already exists or is empty.")
+    except BaseException:
+        raise
 
 
 def fetch_init_counter(data_dir):
@@ -69,6 +133,7 @@ def de_emojify(emojified_tweet):
     return cleared_tweet
 
 
+# Used to clean the tweets
 def clean_tweet(tweet):
     # remove http links
     tweet = re.sub(r'http\S+', '', tweet)
@@ -83,20 +148,37 @@ def clean_tweet(tweet):
     # remove punctuation from tweet
     translator = str.maketrans('', '', string.punctuation)
     tweet = tweet.translate(translator)
+    # remove numbers from the tweet
+    remove_digits = str.maketrans('', '', digits)
+    tweet = tweet.translate(remove_digits)
     # remove leading whitespaces
     tweet = tweet.lstrip(' ')
+    # remove double whitespaces and tabs
+    tweet = " ".join(tweet.split())
     # Format the tweet to lowercase
     tweet = tweet.lower()
 
     return tweet
 
 
-def format_tweet(data):
+def get_tweet_text(data):
     json_object = json.loads(data)
 
     tweet = json_object['text']
 
-    return clean_tweet(tweet)
+    return tweet
+
+
+def no_duplicate(data_dir, tweet):
+    for filename in listdir(data_dir):
+        # create the full path of the file to open
+        path = data_dir + '/' + filename
+        # load the doc
+        tweet_from_file = load_doc(path)
+        # compare
+        if tweet_from_file == tweet:
+            return False
+    return True
 
 
 def format_filename(fname):
@@ -123,19 +205,19 @@ def convert_valid(one_char):
         return '_'
 
 
-def stream_pos_tweets(auth):
+def stream_pos_tweets(auth, number_of_training_tweets, number_of_test_tweets):
     data_dir = "twitterdata/pos"
-    pos_query = [":)", ":-)"]
+    pos_query = [":)", ":-)", ": )", "=)"]
 
-    twitter_stream = Stream(auth, MyListener(data_dir, "pos"))
+    twitter_stream = Stream(auth, MyListener(data_dir, "pos", number_of_training_tweets, number_of_test_tweets))
     twitter_stream.filter(track=pos_query, languages=['en'])
 
 
-def stream_neg_tweets(auth):
+def stream_neg_tweets(auth, number_of_training_tweets, number_of_test_tweets):
     data_dir = "twitterdata/neg"
-    neg_query = [":(", ":-("]
+    neg_query = [":(", ":-(", ": (", "=("]
 
-    twitter_stream = Stream(auth, MyListener(data_dir, sentiment="neg"))
+    twitter_stream = Stream(auth, MyListener(data_dir, "neg", number_of_training_tweets, number_of_test_tweets))
     twitter_stream.filter(track=neg_query, languages=['en'])
 
 
@@ -147,6 +229,6 @@ def setup_authenticator():
 
 auth = setup_authenticator()
 
-# stream_pos_tweets(auth)
+stream_pos_tweets(auth, 5000, 100)
 
-stream_neg_tweets(auth)
+# stream_neg_tweets(auth, 1000, 100)
