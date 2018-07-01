@@ -63,9 +63,14 @@ def remove_unwantedtokens(vocab, min_occurance):
     return tokens
 
 
+print("Started...")
+print("Creating positive vocab...")
 twitter_pos = create_vocab_from_tweets("twitterdata/pos")
+print("Finished!")
+print("Creating negative vocab...")
 twitter_neg = create_vocab_from_tweets("twitterdata/neg")
-
+print("Finished!")
+print("Combining both...")
 twitter_vocab = []
 twitter_vocab.extend(twitter_pos)
 twitter_vocab.extend(twitter_neg)
