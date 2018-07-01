@@ -118,19 +118,13 @@ print(model.summary())
 # compile network
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 # fit network
-model.fit(xTrain, yTrain, epochs=10, verbose=2)
+model.fit(xTrain, yTrain, epochs=5, verbose=2)
+
 # evaluate
-# loss, acc = model.evaluate(xTest, yTest, verbose=0)
+loss, acc = model.evaluate(xTest, yTest, verbose=0)
 
-# print('Test Accuracy: %f' % (acc * 100))
+print('Test Accuracy: %f' % (acc * 100))
 
-print('xTest: \n', xTest)
-
-print('yTest: \n', yTest)
-
-print('xTrain: \n', xTrain)
-
-print('yTrain: \n', yTrain)
 
 # serialize model to JSON
 model_json = model.to_json()
