@@ -94,7 +94,7 @@ class MyListener(StreamListener):
 # This is where the magic happens, checks the tweet for constraints,
 # cleans and formats it and writes it to file afterwards
 def write_tweet_to_file(filename, data, collected_tweets):
-    min_word_count = 2
+    min_word_count = 3
     try:
         with open(filename, 'a', encoding="utf-8") as f:
             # Get Tweet Text
@@ -251,6 +251,6 @@ def setup_authenticator():
 
 auth = setup_authenticator()
 
-stream_pos_tweets(auth, 5000, 100)
+# stream_pos_tweets(auth, 5000, 100)
 
-# stream_neg_tweets(auth, 5000, 100)
+stream_neg_tweets(auth, 5000, 100)

@@ -3,8 +3,10 @@ from os import listdir
 from string import punctuation
 
 from keras.layers import Dense
+from keras.layers import Dropout
 from keras.layers import Embedding
 from keras.layers import Flatten
+from keras.layers.convolutional import AveragePooling1D
 from keras.layers.convolutional import Conv1D
 from keras.layers.convolutional import MaxPooling1D
 from keras.models import Sequential
@@ -60,6 +62,21 @@ def process_docs(directory, vocab, is_training_data):
     return documents
 
 
+def save_model(model, tokenizer):
+    # save Tokenizer to file
+    with open('twitter_tokenizer.pickle', 'wb') as handle:
+        pickle.dump(tokenizer, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
+    # serialize model to JSON
+    model_json = model.to_json()
+    with open("twitterSentimentClassficationModel.json", "w") as json_file:
+        json_file.write(model_json)
+
+    # serialize weights to HDF5
+    model.save_weights("twitterSentimentClassficationWeights.h5")
+    print("Saved model to disk")
+
+
 # load the vocabulary
 vocab_filename = 'twitter_vocab.txt'
 vocab = load_doc(vocab_filename)
@@ -73,12 +90,9 @@ train_docs = negative_docs + positive_docs
 
 # create the tokenizer
 tokenizer = Tokenizer()
+
 # fit the tokenizer on the documents
 tokenizer.fit_on_texts(train_docs)
-
-# save Tokenizer to file
-with open('twitter_tokenizer.pickle', 'wb') as handle:
-    pickle.dump(tokenizer, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 # sequence encode
 encoded_docs = tokenizer.texts_to_sequences(train_docs)
@@ -108,29 +122,26 @@ vocab_size = len(tokenizer.word_index) + 1
 # define model
 model = Sequential()
 model.add(Embedding(vocab_size, 100, input_length=max_length))
+# kernel_size -> defines the size of the sliding window;
+# filters -> how many different windows with the size of the kernel_size
 model.add(Conv1D(filters=32, kernel_size=8, activation='relu'))
 model.add(MaxPooling1D(pool_size=2))
+model.add(AveragePooling1D(pool_size=2))
+model.add(Dropout(0.25))
 model.add(Flatten())
 model.add(Dense(10, activation='relu'))  # Dense: Fully connected layer
+model.add(Dropout(0.5))
 model.add(Dense(1, activation='sigmoid'))
 
 print(model.summary())
 # compile network
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 # fit network
-model.fit(xTrain, yTrain, epochs=5, verbose=2)
+model.fit(xTrain, yTrain, epochs=3, verbose=2)
 
 # evaluate
 loss, acc = model.evaluate(xTest, yTest, verbose=0)
 
 print('Test Accuracy: %f' % (acc * 100))
 
-
-# serialize model to JSON
-model_json = model.to_json()
-with open("twitterSentimentClassficationModel.json", "w") as json_file:
-    json_file.write(model_json)
-
-# serialize weights to HDF5
-model.save_weights("twitterSentimentClassficationWeights.h5")
-print("Saved model to disk")
+save_model(model, tokenizer)

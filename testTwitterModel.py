@@ -82,4 +82,13 @@ def predict_tweet_sentiment(tweet):
     return prediction
 
 
-print(predict_tweet_sentiment(load_doc("test_tweet.txt")))
+def label_for_prediction(prediction):
+    if prediction < 0.5:
+        return "Negative"
+    else:
+        return "Positive"
+
+
+prediction = predict_tweet_sentiment(load_doc("test_tweet.txt"))
+
+print("Sentiment-Prediction: ", label_for_prediction(prediction), " - ", prediction)
